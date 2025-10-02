@@ -157,6 +157,7 @@ class VideoDownloader:
 			Status.value = json.loads(Output)
 
 		except Exception as ExceptionData:
+			print(Output)
 			Status = ExecutionError(-1, str(ExceptionData), Output)
 
 		return Status
