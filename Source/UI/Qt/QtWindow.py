@@ -322,7 +322,7 @@ class QtWindow(QMainWindow):
 		#==========================================================================================#
 
 		self.setFixedSize(1080, 720)
-		self.setWindowTitle("PornHub-dlp v2.0.1")
+		self.setWindowTitle("PornHub-dlp v2.0.2")
 
 		self.__CreateBasicUI()
 		self.__CreateSettingsGroupUI()

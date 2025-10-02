@@ -92,7 +92,7 @@ class LiveCLI:
 
 		Clear()
 		ExitBold = TextStyler("exit").decorate.bold
-		print(TextStyler("PornHub-dlp v2.0.1").decorate.bold)
+		print(TextStyler("PornHub-dlp v2.0.2").decorate.bold)
 		print(f"Вы находитесь в Live-режиме консольного интерфейса. Для выхода выполните {ExitBold} или нажмите Ctrl + C.")
 		print("Введите ссылку на видеоролик или путь к текстовому файлу, из которого нужно извлечь список ссылок.")
 		print("Проект на GitHub:" + " ", end = "")

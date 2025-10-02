@@ -11,3 +11,5 @@ Downloads
 Advertisement.gif
 # Libs.
 yt-dlp
+# Enviroment variables.
+.env

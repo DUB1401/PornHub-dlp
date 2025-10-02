@@ -8,11 +8,14 @@ from dublib.Engine.GetText import GetText
 import warnings
 import locale
 
+from dotenv import load_dotenv
+
 #==========================================================================================#
 # >>>>> ИНИЦИАЛИЗАЦИЯ <<<<< #
 #==========================================================================================#
 
 CheckPythonMinimalVersion(3, 10)
+load_dotenv()
 warnings.filterwarnings("ignore", category = DeprecationWarning)
 GetText.initialize("PornHub-dlp", locale.getdefaultlocale()[0], "Locales")
 Settings = ReadJSON("Settings.json")
