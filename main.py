@@ -20,6 +20,7 @@ warnings.filterwarnings("ignore", category = DeprecationWarning)
 GetText.initialize("PornHub-dlp", locale.getdefaultlocale()[0], "Locales")
 Settings = ReadJSON("Settings.json")
 WindowObject = Application(Settings)
+load_dotenv()
 
 #==========================================================================================#
 # >>>>> ГЕНЕРАЦИЯ ОПИСАНИЙ КОМАНД <<<<< #
@@ -34,7 +35,7 @@ ComPos.add_flag("live", "Live CLI mode.")
 CommandsList.append(Com)
 
 Analyzer = Terminalyzer()
-Analyzer.enable_help()
+Analyzer.helper.enable()
 ParsedCommand = Analyzer.check_commands(CommandsList)
 
 #==========================================================================================#

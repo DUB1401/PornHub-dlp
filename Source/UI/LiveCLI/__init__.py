@@ -1,15 +1,13 @@
 from Source.Core.Downloader import VideoDownloader
 
-from dublib.CLI.Terminalyzer import Command, ParametersTypes, ParsedCommandData, Terminalyzer
+from dublib.CLI.Terminalyzer import Command, ParsedCommandData, Terminalyzer
 from dublib.CLI.TextStyler import Colors, Decorations, TextStyler
 from dublib.Methods.Filesystem import ReadTextFile
 from dublib.Methods.System import Clear
+from dublib.CLI import readline
 
 import shlex
 import os
-
-try: import readline
-except ImportError: pass
 
 class LiveCLI:
 	"""Live CLI режим работы приложения."""
@@ -85,14 +83,14 @@ class LiveCLI:
 		self.__Analyzer = Terminalyzer()
 		self.__Downloader = VideoDownloader()
 
-		self.__Analyzer.enable_help()
+		self.__Analyzer.helper.enable()
 		
 	def run(self):
 		"""Запускает цикл ввода команд."""
 
 		Clear()
 		ExitBold = TextStyler("exit").decorate.bold
-		print(TextStyler("PornHub-dlp v2.0.2").decorate.bold)
+		print(TextStyler("PornHub-dlp v2.1.0").decorate.bold)
 		print(f"Вы находитесь в Live-режиме консольного интерфейса. Для выхода выполните {ExitBold} или нажмите Ctrl + C.")
 		print("Введите ссылку на видеоролик или путь к текстовому файлу, из которого нужно извлечь список ссылок.")
 		print("Проект на GitHub:" + " ", end = "")

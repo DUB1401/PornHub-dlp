@@ -27,7 +27,7 @@ source .venv/bin/activate
 ```Bash
 pip install -r requirements.txt
 ```
-7. Разработчики [yt-dlp](https://github.com/yt-dlp) настоятельно рекомендуют установить библиотеку **ffmpeg** для поддержки расширенных сценариев загрузки и постпроцессинга. Ниже приведено несколько примеров.
+7. Разработчики [yt-dlp](https://github.com/yt-dlp) настоятельно рекомендуют установить библиотеку **ffmpeg** для поддержки расширенных сценариев загрузки и постпроцессинга. Ниже приведено несколько примеров (на Windows портативная установка производится автоматически).
 ```Bash
 # Fedora
 sudo dnf install ffmpeg-free
@@ -61,11 +61,11 @@ build.bat
 ### Версии загружаемых бинарных файлов
 | Файл                | Версия                        | Источник                                                           |
 |---------------------|-------------------------------|--------------------------------------------------------------------|
-| yt-dlp / yt-dlp.exe | _2025.01.12_                  | [ссылка](https://github.com/yt-dlp/yt-dlp/releases/tag/2025.01.12) |
-| ffmpeg.exe          | _6.0 2023-03-04 (essentials)_ | [ссылка](https://github.com/GyanD/codexffmpeg/releases/tag/6.0)    |
-| ffprobe.exe         | _6.0 2023-03-04 (essentials)_ | [ссылка](https://github.com/GyanD/codexffmpeg/releases/tag/6.0)    |
+| yt-dlp / yt-dlp.exe | _2026.03.17_                  | [ссылка](https://github.com/yt-dlp/yt-dlp/releases/tag/2026.03.17) |
+| ffmpeg.exe          | _8.1.1 2026-05-04 (essentials)_ | [ссылка](https://github.com/GyanD/codexffmpeg/releases/tag/8.1.1)    |
+| ffprobe.exe         | _8.1.1 2026-05-04 (essentials)_ | [ссылка](https://github.com/GyanD/codexffmpeg/releases/tag/8.1.1)    |
 
 # Благодарность
 * [yt-dlp](https://github.com/yt-dlp) – библиотека для скачивания видео из множества источников с широким дополнительным функционалом.
 
-_Copyright © DUB1401. 2023-2025._
+_Copyright © DUB1401. 2023-2026._

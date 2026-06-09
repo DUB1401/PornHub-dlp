@@ -1,4 +1,3 @@
-from Source.UI.Qt.QLabelAdvertisement import QLabelAdvertisement
 from Source.UI.Qt.yt_dlp import yt_dlp
 
 from PyQt6.QtWidgets import (
@@ -91,9 +90,6 @@ class QtWindow(QMainWindow):
 
 		self.Input.moveCursor(QTextCursor.MoveOperation.End, QTextCursor.MoveMode.MoveAnchor)
 
-	def __OpenAdvertisement(self):
-		QDesktopServices.openUrl(QUrl(self.__Settings["advertisement"]))
-
 	def __OpenGitHub(self):
 		QDesktopServices.openUrl(QUrl("https://github.com/DUB1401/PornHub-dlp"))
 
@@ -118,28 +114,13 @@ class QtWindow(QMainWindow):
 	# >>>>> ПРИВАТНЫЕ МЕТОДЫ <<<<< #
 	#==========================================================================================#
 
-	def __CreatAdvertisementGroupUI(self):
-		AdvertisementLayout = QVBoxLayout()
-		self.AdsBox.setLayout(AdvertisementLayout)
-
-		AdvertisementGIF = QMovie("Advertisement.gif")
-		AdvertisementGIF.setScaledSize(QSize(180, 260))
-		AdvertisementGIF.start()
-		
-		Advertisement = QLabelAdvertisement(self)
-		Advertisement.clicked.connect(self.__OpenAdvertisement)
-		Advertisement.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-		Advertisement.setMovie(AdvertisementGIF)
-		
-		AdvertisementLayout.addWidget(Advertisement)
-
 	def __CreateBasicUI(self):
 
-		self.AdsBox = QGroupBox(self)
-		self.AdsBox.move(870, 170)
-		self.AdsBox.resize(200, 300)
-		self.AdsBox.setAlignment(Qt.AlignmentFlag.AlignCenter)
-		self.AdsBox.setTitle(f"📰 " + _("Реклама"))
+		# self.AdsBox = QGroupBox(self)
+		# self.AdsBox.move(870, 170)
+		# self.AdsBox.resize(200, 300)
+		# self.AdsBox.setAlignment(Qt.AlignmentFlag.AlignCenter)
+		# self.AdsBox.setTitle(f"📰 " + _("Реклама"))
 
 		self.Clear = QPushButton(self)
 		self.Clear.clicked.connect(self.__Clear)
@@ -153,7 +134,7 @@ class QtWindow(QMainWindow):
 		self.Copy.resize(200, 40)
 		self.Copy.setText(f"📋 " + _("Копировать вывод"))
 		self.Copyright = QLabel(self)
-		self.Copyright.setText("Copyright © 2023-2025. DUB1401.")
+		self.Copyright.setText("Copyright © 2023-2026. DUB1401.")
 		self.Copyright.move(10, 690)
 		self.Copyright.adjustSize()
 
@@ -224,10 +205,18 @@ class QtWindow(QMainWindow):
 		SortByModel.setText(_("По моделям"))
 		SortByModel.setToolTip(_("Сортировать видео по каталогам в соответствии с авторами."))
 		SortByModel.adjustSize()
+
+		ComToOrg = QCheckBox(self)
+		ComToOrg.clicked.connect(lambda: self.__SaveSetting("com_to_org", ComToOrg.isChecked()))
+		ComToOrg.setChecked(self.__Settings["com_to_org"])
+		ComToOrg.setText(_("Использовать *.org"))
+		ComToOrg.setToolTip(_("Подменяет в ссылках домен первого уровня *.com на *.org."))
+		ComToOrg.adjustSize()
 		
 		#---> Добавление объектов GUI в слой.
 		#==========================================================================================#
 		SettingsLayout.addWidget(SortByModel)
+		SettingsLayout.addWidget(ComToOrg)
 		SettingsLayout.addWidget(CualityTitle)
 		SettingsLayout.addWidget(CualitySelecter)
 		SettingsLayout.addStretch()
@@ -288,6 +277,7 @@ class QtWindow(QMainWindow):
 
 		if self.__VideoIndex < len(self.__VideoLinks):
 			CurrentLink = self.__VideoLinks[self.__VideoIndex]
+			if self.__Settings["com_to_org"]: CurrentLink = CurrentLink.replace("pornhub.com", "pornhub.org")
 			self.Print("<b>Downloading: </b>" + str(self.__VideoIndex + 1) + " / " + str(len(self.__VideoLinks)))
 			self.Print("<b>Current task:</b> <i>" + self.__VideoLinks[self.__VideoIndex] + "</i>")
 			self.Subprocess = yt_dlp(SaveDirectory, CurrentLink, self.__Settings["sorting"], self.__Resolutions[self.__Settings["quality"]])
@@ -322,13 +312,10 @@ class QtWindow(QMainWindow):
 		#==========================================================================================#
 
 		self.setFixedSize(1080, 720)
-		self.setWindowTitle("PornHub-dlp v2.0.2")
+		self.setWindowTitle("PornHub-dlp v2.1.0")
 
 		self.__CreateBasicUI()
 		self.__CreateSettingsGroupUI()
-
-		if self.__Settings["advertisement"] and os.path.exists("Advertisement.gif"): self.__CreatAdvertisementGroupUI()
-		else: self.AdsBox.setVisible(False)
 
 	#==========================================================================================#
 	# >>>>> ПУБЛИЧНЫЕ МЕТОДЫ <<<<< #

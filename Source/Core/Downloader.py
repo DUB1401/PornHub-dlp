@@ -1,4 +1,4 @@
-from dublib.Engine.Bus import ExecutionError, ExecutionStatus
+from dublib.Engine.Bus import ExecutionStatus
 from dublib.Methods.Filesystem import NormalizePath
 
 import urllib.request
@@ -6,12 +6,27 @@ import subprocess
 import zipfile
 import json
 import sys
+import ssl
 import os
-
 import re
+
+# Отключение проверки SSL для виртуальных машин.
+ssl._create_default_https_context = ssl._create_unverified_context
 
 class VideoDownloader:
 	"""Загрузчик видео."""
+
+	#==========================================================================================#
+	# >>>>> СВОЙСТВА <<<<< #
+	#==========================================================================================#
+
+	@property
+	def proxy(self) -> str:
+		"""Ключ с прокси."""
+
+		Proxy = os.getenv("HTTPS_PROXY")
+
+		return f" --proxy {Proxy}" if Proxy else ""
 
 	#==========================================================================================#
 	# >>>>> ПРИВАТНЫЕ МЕТОДЫ <<<<< #
@@ -23,7 +38,7 @@ class VideoDownloader:
 		if not os.path.exists(f"yt-dlp/{self.__LibName}"):
 			if not os.path.exists("yt-dlp"): os.makedirs("yt-dlp")
 			print("Downloading yt-dlp... ", end = "", flush = True)
-			urllib.request.urlretrieve(f"https://github.com/yt-dlp/yt-dlp/releases/download/2025.01.12/{self.__LibName}", f"yt-dlp/{self.__LibName}")
+			urllib.request.urlretrieve(f"https://github.com/yt-dlp/yt-dlp/releases/download/2026.03.17/{self.__LibName}", f"yt-dlp/{self.__LibName}")
 			print("Done.")
 
 			if sys.platform == "linux":
@@ -33,14 +48,14 @@ class VideoDownloader:
 
 		if sys.platform == "win32" and not os.path.exists("yt-dlp/ffmpeg.exe"):
 			print("Downloading ffmpeg 7.1 Essentials (Windows build)... ", end = "", flush = True)
-			urllib.request.urlretrieve("https://github.com/GyanD/codexffmpeg/releases/download/7.1/ffmpeg-7.1-essentials_build.zip", "yt-dlp/ffmpeg-essentials.zip")
+			urllib.request.urlretrieve("https://github.com/GyanD/codexffmpeg/releases/download/7.1/ffmpeg-8.1.1-essentials_build.zip", "yt-dlp/ffmpeg-essentials.zip")
 			print("Done.")
 
 			with zipfile.ZipFile("yt-dlp/ffmpeg-essentials.zip", "r") as ZipReader:
 				print("Exracting files...", flush = True)
-				with open("yt-dlp/ffmpeg.exe", "wb") as FileWriter: FileWriter.write(ZipReader.read("ffmpeg-7.1-essentials_build/bin/ffmpeg.exe"))
+				with open("yt-dlp/ffmpeg.exe", "wb") as FileWriter: FileWriter.write(ZipReader.read("ffmpeg-8.1.1-essentials_build/bin/ffmpeg.exe"))
 				print("ffmpeg.exe")
-				with open("yt-dlp/ffprobe.exe", "wb") as FileWriter: FileWriter.write(ZipReader.read("ffmpeg-7.1-essentials_build/bin/ffprobe.exe"))
+				with open("yt-dlp/ffprobe.exe", "wb") as FileWriter: FileWriter.write(ZipReader.read("ffmpeg-8.1.1-essentials_build/bin/ffprobe.exe"))
 				print("ffprobe.exe")
 				print("Done.")
 
@@ -70,7 +85,7 @@ class VideoDownloader:
 			link – ссылка на видео.
 		"""
 
-		return bool(re.match(r"https:\/\/.{0,4}?pornhub\.com\/view_video\.php\?viewkey=\S+\b", link))
+		return bool(re.match(r"https:\/\/.{0,4}?pornhub\.(com|org)\/view_video\.php\?viewkey=\S+\b", link))
 
 	def download_video(self, link: str, quality: int | str) -> ExecutionStatus:
 		"""
@@ -79,7 +94,8 @@ class VideoDownloader:
 			quality – предпочитаемое качество видео.
 		"""
 
-		Status = ExecutionStatus(0)
+		Status = ExecutionStatus()
+		Status.code = 0
 		quality = self.get_video_height(quality)
 		VideoInfoStatus = self.get_video_info(link)
 
@@ -96,11 +112,15 @@ class VideoDownloader:
 			Uploader = ""
 			if self.__IsSortingEnabled: Uploader = "/" + Data["uploader"]
 			Path = NormalizePath(f"yt-dlp/{self.__LibName}")
-			ExitCode = os.system(f"{Path} -f \"bv*[height<={quality}]+ba/b[height<={quality}]\" -o \"{self.__DownloadsDirectory}{Uploader}/{Filename}\" {link} {FfmpegPath}")
-			if ExitCode != 0: Status = ExecutionError(ExitCode, "Unable to download video.")
+			ExitCode = os.system(f"{Path} -f \"bv*[height<={quality}]+ba/b[height<={quality}]\" -o \"{self.__DownloadsDirectory}{Uploader}/{Filename}\" {link} {FfmpegPath}{self.proxy}")
+			
+			if ExitCode != 0:
+				Status.code = ExitCode
+				Status.push_error("Unable to download video.")
 
 		except Exception as ExceptionData:
-			Status = ExecutionError(-1, str(ExceptionData))
+			Status.code = -1
+			Status.push_error(str(ExceptionData))
 
 		return Status
 
@@ -149,16 +169,18 @@ class VideoDownloader:
 			link – ссылка на видео.
 		"""
 
-		Status = ExecutionStatus(0)
+		Status = ExecutionStatus()
+		Status.set_code(0)
 
 		try:
 			Path = NormalizePath(f"yt-dlp/{self.__LibName}")
-			Output = subprocess.getoutput(f"{Path} --dump-json {link}")
+			Output = subprocess.getoutput(f"{Path} --dump-json {link}{self.proxy}")
 			Status.value = json.loads(Output)
 
 		except Exception as ExceptionData:
 			print(Output)
-			Status = ExecutionError(-1, str(ExceptionData), Output)
+			Status.code = -1
+			Status.push_error(str(ExceptionData))
 
 		return Status
 	
