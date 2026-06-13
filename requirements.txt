@@ -1,5 +1,5 @@
-pyinstaller; sys_platform=="win32"
-pyperclip
-dublib==0.19.0
+questionary
+pyfiglet
 dotenv
-pyqt6
+dublib==0.28.1
+yt-dlp
